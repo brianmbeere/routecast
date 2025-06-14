@@ -2,8 +2,18 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Allow CORS for all origins (for development)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/', response_class=HTMLResponse)
 def read_root():
@@ -37,3 +47,24 @@ def optimize_route(request: RouteRequest):
     # For MVP, just return the input as a mock optimized route
     route = [request.start] + request.stops + [request.end]
     return {"optimized_route": route, "constraints": request.constraints}
+
+@app.post('/api/route')
+def api_route(request: RouteRequest):
+    """
+    Accepts JSON: {"start": ..., "end": ..., "stops": [..], "constraints": {...}}
+    Returns: {"optimized_route": [..]}
+    """
+    route = [request.start] + request.stops + [request.end]
+    return {"optimized_route": route}
+
+@app.get('/api/example')
+def api_example():
+    """
+    Returns an example payload for the frontend to use as a template.
+    """
+    return {
+        "start": "Nairobi",
+        "end": "Mombasa",
+        "stops": ["Machakos", "Voi", "Mariakani"],
+        "constraints": {}
+    }
