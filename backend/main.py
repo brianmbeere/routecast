@@ -1,6 +1,7 @@
 # Entry point for FastAPI backend
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -24,3 +25,15 @@ def read_root():
       </body>
     </html>
     """
+
+class RouteRequest(BaseModel):
+    start: str
+    end: str
+    stops: list[str] = []
+    constraints: dict = {}
+
+@app.post('/optimize-route')
+def optimize_route(request: RouteRequest):
+    # For MVP, just return the input as a mock optimized route
+    route = [request.start] + request.stops + [request.end]
+    return {"optimized_route": route, "constraints": request.constraints}
