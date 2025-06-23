@@ -10,11 +10,13 @@ class RouteRequest(BaseModel):
 
 class OptimizedStop(BaseModel):
     address: str
+    location: tuple[float, float]  # [lng, lat]
     eta_minutes: int
     distance_miles: float
 
 class RouteResponse(BaseModel):
-    stops: List[OptimizedStop]
+    stops: list[OptimizedStop]
     total_eta: int
     total_distance_miles: float
     map_url: str | None = None
+

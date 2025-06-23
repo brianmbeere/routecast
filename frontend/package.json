@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.1.2",
     "framer-motion": "^12.18.1",
+    "mapbox-gl": "^3.13.0",
     "preact": "^10.26.5",
     "preact-router": "^4.1.2"
   },

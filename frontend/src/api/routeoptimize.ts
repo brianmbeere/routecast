@@ -1,15 +1,17 @@
-// src/api/routeoptimize.ts
+import { type OptimizedStop } from "../types/route";
+
 export type OptimizeRouteRequest = {
   pickup: string;
   stops: { address: string }[];
 };
 
 export type OptimizeRouteResponse = {
-  stops: { address: string; eta_minutes: number; distance_miles: number }[];
+  stops: OptimizedStop[];
   total_eta: number;
   total_distance_miles: number;
   map_url?: string;
 };
+
 
 export async function optimizeRoute(
   payload: OptimizeRouteRequest
