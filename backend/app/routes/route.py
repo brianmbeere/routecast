@@ -1,18 +1,19 @@
 from fastapi import APIRouter
-from app.models.route import RouteRequest
+from app.models.route import RouteRequest, RouteResponse
 from app.services.optimizer import optimize_route_mock
+
 
 router = APIRouter()
 
-@router.post("/route")
+@router.post("/api/route")
 def api_route(request: RouteRequest):
     return optimize_route_mock(request)
 
-@router.post("/optimize-route")
+@router.post("/api/optimize-route", response_model=RouteResponse)
 def optimize_route(request: RouteRequest):
     return optimize_route_mock(request)
 
-@router.get("/example")
+@router.get("/api/example")
 def api_example():
     return {
         "start": "Nairobi",
@@ -20,3 +21,6 @@ def api_example():
         "stops": ["Machakos", "Voi", "Mariakani"],
         "constraints": {}
     }
+
+
+
