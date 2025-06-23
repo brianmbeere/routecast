@@ -1,17 +1,17 @@
 from fastapi import APIRouter
 from app.models.route import RouteRequest, RouteResponse
-from app.services.optimizer import optimize_route_mock
+from app.services.optimizer import optimize_route_real
 
 
 router = APIRouter()
 
 @router.post("/api/route")
-def api_route(request: RouteRequest):
-    return optimize_route_mock(request)
+async def api_route(request: RouteRequest):
+    return await optimize_route_real(request)
 
 @router.post("/api/optimize-route", response_model=RouteResponse)
-def optimize_route(request: RouteRequest):
-    return optimize_route_mock(request)
+async def optimize_route(request: RouteRequest):
+    return await optimize_route_real(request)
 
 @router.get("/api/example")
 def api_example():
