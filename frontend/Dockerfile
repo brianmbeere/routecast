@@ -1,4 +1,5 @@
-# Dockerfile for React frontend (development with hot-reloading)
+
+# Dockerfile for Preact frontend (development with hot-reloading)
 FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
