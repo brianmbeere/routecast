@@ -1,8 +1,20 @@
 from pydantic import BaseModel
 from typing import List, Dict
 
+class Stop(BaseModel):
+    address: str
+
 class RouteRequest(BaseModel):
-    start: str
-    end: str
-    stops: List[str] = []
-    constraints: Dict = {}
+    pickup: str
+    stops: List[Stop]
+
+class OptimizedStop(BaseModel):
+    address: str
+    eta_minutes: int
+    distance_miles: float
+
+class RouteResponse(BaseModel):
+    stops: List[OptimizedStop]
+    total_eta: int
+    total_distance_miles: float
+    map_url: str | None = None

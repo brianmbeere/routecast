@@ -1,15 +1,37 @@
-# frontend/Makefile
+# === CONFIGURATION ===
+NPM=npm
+VITE_PORT=5173
 
-.PHONY: install run build lint
+# === COMMANDS ===
 
+# Install dependencies
 install:
-	npm install
+	$(NPM) install
 
-run:
-	npm run dev
+# Start dev server
+dev:
+	$(NPM) run dev
 
-build:
-	npm run build
+# Run type checking
+typecheck:
+	$(NPM) run type-check
 
+# Run linting (optional: requires eslint setup)
 lint:
-	npx eslint src --ext .js,.ts,.tsx
+	$(NPM) run lint
+
+# Build for production
+build:
+	$(NPM) run build
+
+# Preview production build
+preview:
+	$(NPM) run preview -- --port $(VITE_PORT)
+
+# Remove node_modules and lockfile
+clean:
+	rm -rf node_modules package-lock.json dist
+
+# Show active Vite port
+env:
+	@echo "Frontend running on http://localhost:$(VITE_PORT)"
