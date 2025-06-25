@@ -44,46 +44,63 @@ export function useMapbox({ container, stops, accessToken }: UseMapboxOptions) {
         .addTo(map);
     });
 
-    map.on("load", () => {
-  map.addSource("route", {
-    type: "geojson",
-    data: {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: stops.map((s) => s.location),
+  map.on("load", () => {
+    const allCoords = stops.map((s) => s.location);
+    const routeSourceId = "route";
+
+    // Initialize with first point only
+    map.addSource(routeSourceId, {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: [allCoords[0]],
+        },
       },
-    },
+    });
+
+    map.addLayer({
+      id: "route-line",
+      type: "line",
+      source: routeSourceId,
+      layout: {
+        "line-join": "round",
+        "line-cap": "round",
+      },
+      paint: {
+        "line-color": "#3b82f6",
+        "line-width": 4,
+      },
+    });
+
+    // Animate drawing of the line
+    let index = 2;
+
+    const animateLine = () => {
+      const nextCoords = allCoords.slice(0, index);
+      const source = map.getSource(routeSourceId) as mapboxgl.GeoJSONSource;
+      if (source) {
+        source.setData({
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            coordinates: nextCoords,
+          },
+        });
+      }
+
+      if (index < allCoords.length + 1) {
+        index++;
+        requestAnimationFrame(animateLine);
+      }
+    };
+
+    animateLine();
   });
-
-  map.addLayer({
-    id: "route-line",
-    type: "line",
-    source: "route",
-    layout: {
-      "line-join": "round",
-      "line-cap": "round",
-    },
-    paint: {
-      "line-color": "#3b82f6",
-      "line-width": 4,
-      "line-opacity": 0,
-    },
-  });
-
-  let opacity = 0;
-  const animate = () => {
-    opacity = Math.min(opacity + 0.05, 1);
-    if (map.getLayer("route-line")) {
-      map.setPaintProperty("route-line", "line-opacity", opacity);
-    }
-    if (opacity < 1) requestAnimationFrame(animate);
-  };
-    animate();
-  });
-
-
+  
   mapRef.current = map;
   }, [container, stops, accessToken]);
 
