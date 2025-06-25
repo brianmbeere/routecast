@@ -1,5 +1,5 @@
+import { useRef, useEffect, useState } from "preact/hooks";
 import { Box } from "@mui/material";
-import { useRef } from "preact/hooks";
 import { useMapbox } from "../hooks/useMapbox";
 
 type Stop = {
@@ -13,11 +13,16 @@ type Props = {
 
 const MapboxRouteMap = ({ stops }: Props) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useMapbox({
-    container: mapContainer.current,
+    container: mounted ? mapContainer.current : null,
     stops,
-    accessToken: import.meta.env.VITE_MAP_BOX_API_TOKEN,
+    accessToken: import.meta.env.VITE_MAP_BOX_ACCESS_TOKEN,
   });
 
   return (
