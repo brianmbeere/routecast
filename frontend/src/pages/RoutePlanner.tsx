@@ -1,7 +1,6 @@
 import { useState } from "preact/hooks";
 import {
   Container,
-  TextField,
   Button,
   Typography,
   Box,
@@ -15,6 +14,7 @@ import {
 } from "../api/routeoptimize";
 import StopInputList from "../components/StopInputList";
 import MapboxRouteMap from "../components/MapboxRouteMap";
+import AutocompleteTextField from "../components/AutoCompleteTextField";
 
 const RoutePlanner: FunctionalComponent = () => {
   const [pickup, setPickup] = useState("");
@@ -53,15 +53,11 @@ const RoutePlanner: FunctionalComponent = () => {
       </Typography>
 
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <TextField
-          fullWidth
+        <AutocompleteTextField
           label="Pickup Location"
-          variant="outlined"
           value={pickup}
-          onChange={(e) => setPickup((e.target as HTMLInputElement).value)}
-          sx={{ mb: 3 }}
+          onSelect={setPickup}
         />
-
         <StopInputList
           stops={stops}
           onChange={handleStopChange}

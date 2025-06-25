@@ -1,4 +1,5 @@
-import { TextField, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import AutocompleteTextField from "./AutoCompleteTextField"; // Adjust path if needed
 
 type Stop = { address: string };
 type Props = {
@@ -14,15 +15,13 @@ const StopInputList = ({ stops, onChange, onAdd }: Props) => (
     </Typography>
 
     {stops.map((stop, index) => (
-      <TextField
-        key={index}
-        fullWidth
-        label={`Stop #${index + 1}`}
-        variant="outlined"
-        value={stop.address}
-        onChange={(e) => onChange(index, (e.target as HTMLInputElement).value)}
-        sx={{ mb: 2 }}
-      />
+      <Box key={index} sx={{ mb: 2 }}>
+        <AutocompleteTextField
+          label={`Stop #${index + 1}`}
+          value={stop.address}
+          onSelect={(val) => onChange(index, val)}
+        />
+      </Box>
     ))}
 
     <Box textAlign="right">
