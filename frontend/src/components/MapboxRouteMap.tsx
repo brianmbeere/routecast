@@ -22,7 +22,7 @@ const MapboxRouteMap = ({ stops }: Props) => {
   useMapbox({
     container: mounted ? mapContainer.current : null,
     stops,
-    accessToken: import.meta.env.VITE_MAP_BOX_ACCESS_TOKEN,
+    accessToken: import.meta.env.VITE_MAP_BOX_API_TOKEN,
   });
 
   return (
