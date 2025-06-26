@@ -7,7 +7,7 @@ type Props = {
   onSelect: (value: string) => void;
 };
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAP_BOX_API_TOKEN;
+const MAP_BOX_TOKEN = import.meta.env.VITE_MAP_BOX_API_TOKEN;
 
 const AutocompleteTextField = ({ label, value, onSelect }: Props) => {
   const [options, setOptions] = useState<string[]>([]);
@@ -28,7 +28,7 @@ const AutocompleteTextField = ({ label, value, onSelect }: Props) => {
         const res = await fetch(
           `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
             value
-          )}.json?access_token=${MAPBOX_TOKEN}&autocomplete=true&limit=5`,
+          )}.json?access_token=${MAP_BOX_TOKEN}&autocomplete=true&limit=5`,
           { signal: controller.signal }
         );
 
