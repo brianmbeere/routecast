@@ -1,7 +1,12 @@
 import { render } from 'preact'
 import './index.css'
-import { App } from './app.tsx'
+import App from './app.tsx'
 import "mapbox-gl/dist/mapbox-gl.css";
+import { BrowserRouter } from 'react-router-dom'
 
-
-render(<App />, document.getElementById('app')!)
+render(
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>,
+    document.getElementById('app')!
+)
