@@ -64,7 +64,7 @@ const LandingPage: FunctionalComponent = () => {
           <Typography variant="h6" color="textSecondary" paragraph>
             Plan fuel-efficient, weather-aware, height-safe truck routes in seconds. Designed for fleet managers, drivers, and logistic companies.
           </Typography>
-          <Button variant="contained" size="large" href="/plan" sx={{ mt: 3 }}>
+          <Button variant="contained" size="large" href="/signin" sx={{ mt: 3 }}>
             Try Routecast
           </Button>
         </motion.div>

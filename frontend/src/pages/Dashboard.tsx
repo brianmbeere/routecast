@@ -15,11 +15,13 @@ import {
   IconButton,
   Container
 } from "@mui/material";
-import { MenuIcon } from '../components/SVGIcons';
+import { LogoutIcon, MenuIcon } from '../components/SVGIcons';
 import RoutePlanner from "./RoutePlanner";
 import SavedRoutes from "../components/SavedRoutes";
 import RouteInsights from "../components/RouteInsights";
 import Settings from "../components/Settings";
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -28,6 +30,7 @@ const Dashboard: FunctionalComponent = () => {
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState("plan");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -39,22 +42,46 @@ const Dashboard: FunctionalComponent = () => {
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate('/signin'); // or navigate to login if you prefer
+  };
+
   const drawer = (
     <div>
       <Toolbar />
       <List>
-        <ListItemButton onClick={() => setCurrentTab("plan")}>
+        <ListItemButton
+          selected={currentTab === "plan"}
+          onClick={() => setCurrentTab("plan")}
+        >
           <ListItemText primary="Route Optimizer" />
         </ListItemButton>
-        <ListItemButton onClick={() => setCurrentTab("saved")}>
+        <ListItemButton
+          selected={currentTab === "saved"}
+          onClick={() => setCurrentTab("saved")}
+        >
           <ListItemText primary="Saved Routes" />
         </ListItemButton>
-        <ListItemButton onClick={() => setCurrentTab("insights")}>
+        <ListItemButton
+          selected={currentTab === "insights"}
+          onClick={() => setCurrentTab("insights")}
+        >
           <ListItemText primary="Route Insights" />
         </ListItemButton>
-        <ListItemButton onClick={() => setCurrentTab("settings")}>
+        <ListItemButton
+          selected={currentTab === "settings"}
+          onClick={() => setCurrentTab("settings")}
+        >
           <ListItemText primary="Settings" />
         </ListItemButton>
+        {/* Show logout in drawer only on mobile */}
+        <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', pl: 2, mt: 2 }}>
+          <IconButton color="inherit" onClick={handleLogout} title="Logout">
+            <LogoutIcon />
+          </IconButton>
+          <Typography variant="body2" sx={{ ml: 1 }}>Logout</Typography>
+        </Box>
       </List>
     </div>
   );
@@ -70,9 +97,15 @@ const Dashboard: FunctionalComponent = () => {
           <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: "none" } }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Routecast Dashboard
           </Typography>
+          {/* Show logout in app bar only on desktop */}
+          <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+            <IconButton color="inherit" onClick={handleLogout} title="Logout">
+              <LogoutIcon />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
