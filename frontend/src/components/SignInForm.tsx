@@ -16,6 +16,7 @@ const SignInForm: FunctionalComponent = () => {
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      console.log('User signed in successfully');
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.message);

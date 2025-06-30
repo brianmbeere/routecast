@@ -1,19 +1,19 @@
-import { Router } from "preact-router";
+import { Routes, Route } from "react-router-dom";
 import { type FunctionalComponent } from "preact";
 import { routes } from "./routes";
-import PrivateRoute  from "./auth/PrivateRoute";
+import PrivateRoute from "./auth/PrivateRoute";
 
 const App: FunctionalComponent = () => {
   return (
-    <Router>
+    <Routes>
       {routes.map(({ path, component: Component, protected: isProtected }) => {
-        const Wrapped = isProtected
-          ? (props: any) => <PrivateRoute><Component {...props} /></PrivateRoute>
-          : Component;
-        return <Wrapped path={path} key={path} />;
+        const element = isProtected
+          ? <PrivateRoute><Component /></PrivateRoute>
+          : <Component />;
+        return <Route path={path} element={element} key={path} />;
       })}
-    </Router>
+    </Routes>
   );
-}
+};
 
 export default App;
