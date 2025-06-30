@@ -4,9 +4,16 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../hooks/initializeFirebase';
 import { useNavigate } from 'react-router-dom';
 import {
-  Container, TextField, Button, Typography, Box, Paper, CircularProgress, Link
+  Container, TextField, Button, Typography, Box, Paper, CircularProgress, Link, MenuItem
 } from '@mui/material';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
+
+const COUNTRIES = [
+  'United States', 'Canada', 'United Kingdom', 'Kenya', 'India', 'Germany', 'France', 'Australia', 'South Africa', 'Nigeria', 'Other'
+];
+const ROLES = [
+  'Fleet Manager', 'Driver', 'Logistics Coordinator', 'Business Owner', 'Data Analyst', 'Developer', 'Other'
+];
 
 const SignUpForm: FunctionalComponent = () => {
   const [email, setEmail] = useState('');
@@ -83,17 +90,27 @@ const SignUpForm: FunctionalComponent = () => {
             fullWidth
           />
           <TextField
+            select
             label="Professional Title / Role"
             value={title}
             onChange={e => setTitle((e.target as HTMLInputElement)?.value || '')}
             fullWidth
-          />
+          >
+            {ROLES.map(role => (
+              <MenuItem key={role} value={role}>{role}</MenuItem>
+            ))}
+          </TextField>
           <TextField
+            select
             label="Country"
             value={country}
             onChange={e => setCountry((e.target as HTMLInputElement)?.value || '')}
             fullWidth
-          />
+          >
+            {COUNTRIES.map(c => (
+              <MenuItem key={c} value={c}>{c}</MenuItem>
+            ))}
+          </TextField>
           <TextField
             label="Intended Use Case / Reason"
             value={useCase}
