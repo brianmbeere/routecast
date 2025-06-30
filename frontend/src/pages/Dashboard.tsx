@@ -78,6 +78,7 @@ const Dashboard: FunctionalComponent = () => {
         {/* Show logout in drawer only on mobile */}
         <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', pl: 2, mt: 2 }}>
           <IconButton color="inherit" onClick={handleLogout} title="Logout">
+            <Typography variant="body2" sx={{ mr: 1 }}>Logout</Typography>
             <LogoutIcon />
           </IconButton>
           <Typography variant="body2" sx={{ ml: 1 }}>Logout</Typography>
