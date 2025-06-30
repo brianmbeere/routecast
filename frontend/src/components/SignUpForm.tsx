@@ -1,31 +1,28 @@
 import { useState } from 'preact/hooks';
-import { type FunctionalComponent } from "preact";
+import { type FunctionalComponent } from 'preact';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../hooks/initializeFirebase';
 import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Paper
+  Container, TextField, Button, Typography, Box, Paper, CircularProgress, Link
 } from '@mui/material';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 const SignUpForm: FunctionalComponent = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [fullName, setFullName] = useState<string>('');
-  const [organization, setOrganization] = useState<string>('');
-  const [title, setTitle] = useState<string>('');
-  const [country, setCountry] = useState<string>('');
-  const [useCase, setUseCase] = useState<string>('');
-  const [linkedin, setLinkedin] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [title, setTitle] = useState('');
+  const [country, setCountry] = useState('');
+  const [useCase, setUseCase] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignUp = async (): Promise<void> => {
+  const handleSignUp = async () => {
+    setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -41,19 +38,38 @@ const SignUpForm: FunctionalComponent = () => {
         createdAt: new Date().toISOString(),
       });
       navigate('/dashboard');
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
-      else setError('Unexpected error occurred.');
+    } catch (err: any) {
+      setError(err.message || 'Unexpected error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography variant="h5" gutterBottom>
+    <Container
+      maxWidth="xs"
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        bgcolor: 'background.default',
+        px: 2,
+      }}
+    >
+      <Paper
+        elevation={4}
+        sx={{
+          p: 4,
+          width: '100%',
+          borderRadius: 3,
+          boxShadow: '0 8px 30px rgba(0,0,0,0.05)',
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" align="center" gutterBottom>
           Sign Up
         </Typography>
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box component="form" display="flex" flexDirection="column" gap={2} noValidate>
           <TextField
             label="Full Name"
             value={fullName}
@@ -61,13 +77,13 @@ const SignUpForm: FunctionalComponent = () => {
             fullWidth
           />
           <TextField
-            label="Organization/Company"
+            label="Organization / Company"
             value={organization}
             onChange={e => setOrganization((e.target as HTMLInputElement)?.value || '')}
             fullWidth
           />
           <TextField
-            label="Professional Title/Role"
+            label="Professional Title / Role"
             value={title}
             onChange={e => setTitle((e.target as HTMLInputElement)?.value || '')}
             fullWidth
@@ -79,13 +95,13 @@ const SignUpForm: FunctionalComponent = () => {
             fullWidth
           />
           <TextField
-            label="Intended Use Case / Reason for Using"
+            label="Intended Use Case / Reason"
             value={useCase}
             onChange={e => setUseCase((e.target as HTMLInputElement)?.value || '')}
             fullWidth
           />
           <TextField
-            label="LinkedIn or Professional Profile URL (optional)"
+            label="LinkedIn / Professional Profile URL (optional)"
             value={linkedin}
             onChange={e => setLinkedin((e.target as HTMLInputElement)?.value || '')}
             fullWidth
@@ -105,11 +121,20 @@ const SignUpForm: FunctionalComponent = () => {
             fullWidth
           />
           {error && <Typography color="error">{error}</Typography>}
-          <Button variant="contained" onClick={handleSignUp} fullWidth>
-            Sign Up
+          <Button
+            variant="contained"
+            onClick={handleSignUp}
+            fullWidth
+            size="large"
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Sign Up'}
           </Button>
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Already have an account? <a href="/signin">Sign In</a>
+            Already have an account?{' '}
+            <Link href="/signin" underline="hover">
+              Sign In
+            </Link>
           </Typography>
         </Box>
       </Paper>

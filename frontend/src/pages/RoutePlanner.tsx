@@ -17,7 +17,7 @@ import {
 import StopInputList from "../components/StopInputList";
 import MapboxRouteMap from "../components/MapboxRouteMap";
 import AutocompleteTextField from "../components/AutoCompleteTextField";
-import {ContentCopyIcon} from '../components/SVGIcons';
+import { ContentCopyIcon } from '../components/SVGIcons';
 
 const RoutePlanner: FunctionalComponent = () => {
   const [pickup, setPickup] = useState("");
@@ -34,6 +34,11 @@ const RoutePlanner: FunctionalComponent = () => {
 
   const addStop = () => {
     setStops([...stops, { address: "" }]);
+  };
+
+  const removeStop = (index: number) => {
+    if (stops.length === 1) return;
+    setStops(stops.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
@@ -83,6 +88,8 @@ const RoutePlanner: FunctionalComponent = () => {
               stops={stops}
               onChange={handleStopChange}
               onAdd={addStop}
+              onRemove={removeStop}
+              inputFullWidth
             />
             <Button
               variant="contained"
