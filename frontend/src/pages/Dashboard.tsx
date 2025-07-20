@@ -18,27 +18,69 @@ import {
 import { LogoutIcon, MenuIcon } from '../components/SVGIcons';
 import RoutePlanner from "./RoutePlanner";
 import SavedRoutes from "../components/SavedRoutes";
-import RouteInsights from "../components/RouteInsights";
+import SourcingInsights from "../components/ProduceInsights";
+import DeliveryInsights from "../components/DeliveryInsights";
+import ProduceRequestFeed from "../components/ProduceRequestFeed";
+import FarmFinder from "../components/FarmFinder";
 import Settings from "../components/Settings";
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../hooks/initializeFirebase";
+
 
 const drawerWidth = 240;
 
 const Dashboard: FunctionalComponent = () => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("plan");
+  const [currentTab, setCurrentTab] = useState("home");
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const [role, setRole] = useState<"farmer" | "restaurant" | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
+    const unsub = onAuthStateChanged (auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+      
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setRole(userData.role || null);
+        } else {
+          setRole(null);
+        }
+      }else{
+        setRole(null);
+      }
+
     });
     return unsub;
   }, []);
+
+  const renderTabContent = () => {
+    if (role === "farmer") {
+      return {
+        home: <ProduceRequestFeed />,
+        plan: <RoutePlanner />,
+        saved: <SavedRoutes />,
+        insights: <DeliveryInsights />,
+        settings: <Settings user={user} />,
+      }[currentTab];
+    } else if (role === "restaurant") {
+      return {
+        home: <FarmFinder />,
+        plan: <RoutePlanner />,
+        saved: <SavedRoutes />,
+        insights: <SourcingInsights />,
+        settings: <Settings user={user} />,
+      }[currentTab];
+    }
+  };
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -51,6 +93,12 @@ const Dashboard: FunctionalComponent = () => {
     <div>
       <Toolbar />
       <List>
+        <ListItemButton
+          selected={currentTab === "home"}
+          onClick={() => setCurrentTab("home")}
+        >
+          <ListItemText primary="Home" />
+        </ListItemButton>
         <ListItemButton
           selected={currentTab === "plan"}
           onClick={() => setCurrentTab("plan")}
@@ -137,10 +185,7 @@ const Dashboard: FunctionalComponent = () => {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
-        {currentTab === "plan" && <RoutePlanner />}
-        {currentTab === "saved" && <SavedRoutes />}
-        {currentTab === "insights" && <RouteInsights />}
-        {currentTab === "settings" && <Settings user={user} />}
+        {renderTabContent()}
       </Box>
     </Box>
   );

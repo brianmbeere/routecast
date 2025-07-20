@@ -14,9 +14,9 @@ import {
   type OptimizeRouteRequest,
   type OptimizeRouteResponse,
 } from "../api/routeoptimize";
-import StopInputList from "../components/StopInputList";
-import MapboxRouteMap from "../components/MapboxRouteMap";
-import AutocompleteTextField from "../components/AutoCompleteTextField";
+import StopInputList from "../components/route/StopInputList";
+import MapboxRouteMap from "../components/route/MapboxRouteMap";
+import AutocompleteTextField from "../components/route/AutoCompleteTextField";
 import { ContentCopyIcon } from '../components/SVGIcons';
 
 const RoutePlanner: FunctionalComponent = () => {

@@ -1,157 +1,164 @@
 import { useState } from 'preact/hooks';
-import { type FunctionalComponent } from 'preact';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../hooks/initializeFirebase';
 import { useNavigate } from 'react-router-dom';
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { BASE_URL } from "../utils";
 import {
-  Container, TextField, Button, Typography, Box, Paper, CircularProgress, Link, MenuItem
+  Container, TextField, Button, Typography, Box, Paper
 } from '@mui/material';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 const COUNTRIES = [
-  'United States', 'Canada', 'United Kingdom', 'Kenya', 'India', 'Germany', 'France', 'Australia', 'South Africa', 'Nigeria', 'Other'
-];
-const ROLES = [
-  'Fleet Manager', 'Driver', 'Logistics Coordinator', 'Business Owner', 'Data Analyst', 'Developer', 'Other'
+  "Canada","United States"
 ];
 
-const SignUpForm: FunctionalComponent = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [organization, setOrganization] = useState('');
-  const [title, setTitle] = useState('');
-  const [country, setCountry] = useState('');
-  const [useCase, setUseCase] = useState('');
-  const [linkedin, setLinkedin] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+const schema = yup.object({
+  fullName: yup.string().required("Full Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  organization: yup.string().required("Organization is required"),
+  country: yup.string().oneOf(COUNTRIES, "Select a valid role").required("Country is required"),
+  role: yup.string().oneOf(["","farmer", "restaurant"], "Select a valid role").required("Role is required"),
+});
+
+const SignUpForm = () => {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
   const navigate = useNavigate();
+  const [firebaseError, setFirebaseError] = useState("");
 
-  const handleSignUp = async () => {
-    setLoading(true);
+  const onSubmit = async (data: any) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
+      const idToken = await user.getIdToken();
       const db = getFirestore();
-      await setDoc(doc(db, 'users', user.uid), {
-        fullName,
-        organization,
-        title,
-        country,
-        useCase,
-        linkedin,
-        email,
+
+      await setDoc(doc(db, "users", user.uid), {
+        ...data,
         createdAt: new Date().toISOString(),
       });
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Unexpected error occurred.');
-    } finally {
-      setLoading(false);
+
+      const response = await fetch(`${BASE_URL}/users/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          ...data,
+          firebase_uid: user.uid,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save user in backend");
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      if ((err as any).code === "auth/email-already-in-use") {
+        setFirebaseError("Email already in use. Try signing in or use a different email.");
+      } else {
+        setFirebaseError((err as Error).message || "Unexpected error occurred.");
+      }
     }
   };
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        bgcolor: 'background.default',
-        px: 2,
-      }}
-    >
-      <Paper
-        elevation={4}
-        sx={{
-          p: 4,
-          width: '100%',
-          borderRadius: 3,
-          boxShadow: '0 8px 30px rgba(0,0,0,0.05)',
-        }}
-      >
-        <Typography variant="h5" fontWeight="bold" align="center" gutterBottom>
+    <Container maxWidth="xs">
+      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
+        <Typography variant="h5" gutterBottom>
           Sign Up
         </Typography>
-        <Box component="form" display="flex" flexDirection="column" gap={2} noValidate>
-          <TextField
-            label="Full Name"
-            value={fullName}
-            onChange={e => setFullName((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} display="flex" flexDirection="column" gap={2}>
+          <Controller
+            name="fullName"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField label="Full Name" fullWidth {...field} error={!!errors.fullName} helperText={errors.fullName?.message} />
+            )}
           />
-          <TextField
-            label="Organization / Company"
-            value={organization}
-            onChange={e => setOrganization((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+          <Controller
+            name="organization"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField label="Organization" fullWidth {...field} error={!!errors.organization} helperText={errors.organization?.message} />
+            )}
           />
-          <TextField
-            select
-            label="Professional Title / Role"
-            value={title}
-            onChange={e => setTitle((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
-          >
-            {ROLES.map(role => (
-              <MenuItem key={role} value={role}>{role}</MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Country"
-            value={country}
-            onChange={e => setCountry((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
-          >
-            {COUNTRIES.map(c => (
-              <MenuItem key={c} value={c}>{c}</MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="Intended Use Case / Reason"
-            value={useCase}
-            onChange={e => setUseCase((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+          <Controller
+             name="role"
+             control={control}
+             defaultValue=""
+             render={({ field }) => (
+              <TextField
+                select
+                label=""
+                fullWidth
+                SelectProps={{ native: true }}
+                {...field}
+                error={!!errors.role}
+                helperText={errors.role?.message}
+              > 
+                <option value="">Select a country</option>
+                  {COUNTRIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+              </TextField>
+            )}
           />
-          <TextField
-            label="LinkedIn / Professional Profile URL (optional)"
-            value={linkedin}
-            onChange={e => setLinkedin((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField label="Email" type="email" fullWidth {...field} error={!!errors.email} helperText={errors.email?.message} />
+            )}
           />
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={e => setEmail((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField label="Password" type="password" fullWidth {...field} error={!!errors.password} helperText={errors.password?.message} />
+            )}
           />
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={e => setPassword((e.target as HTMLInputElement)?.value || '')}
-            fullWidth
+          <Controller
+            name="role"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                select
+                label=""
+                fullWidth
+                SelectProps={{ native: true }}
+                {...field}
+                error={!!errors.role}
+                helperText={errors.role?.message}
+              >
+                <option value="">Select a role</option>
+                <option value="farmer">Farmer / Produce Supplier</option>
+                <option value="restaurant">Restaurant / Food Truck Owner</option>
+              </TextField>
+            )}
           />
-          {error && <Typography color="error">{error}</Typography>}
-          <Button
-            variant="contained"
-            onClick={handleSignUp}
-            fullWidth
-            size="large"
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} /> : 'Sign Up'}
+
+          {firebaseError && <Typography color="error">{firebaseError}</Typography>}
+          <Button type="submit" variant="contained" fullWidth>
+            Sign Up
           </Button>
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Already have an account?{' '}
-            <Link href="/signin" underline="hover">
-              Sign In
-            </Link>
+            Already have an account? <a href="/signin">Sign In</a>
           </Typography>
         </Box>
       </Paper>

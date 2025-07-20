@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "preact/hooks";
 import { Box } from "@mui/material";
-import { useMapbox } from "../hooks/useMapbox";
+import { useMapbox } from "../../hooks/useMapbox";
 
 type Stop = {
   address: string;
