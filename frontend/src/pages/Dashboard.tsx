@@ -1,21 +1,14 @@
 import { useState, useEffect } from "preact/hooks";
-import { type FunctionalComponent } from "preact";
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
-import { auth } from "../hooks/initializeFirebase";
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemText,
-  CssBaseline,
-  Toolbar,
-  AppBar,
-  Typography,
-  Box,
-  IconButton,
-  Container
-} from "@mui/material";
-import { LogoutIcon, MenuIcon } from '../components/SVGIcons';
+import type { FunctionalComponent } from "preact";
+import { onAuthStateChanged, type User as FirebaseUser, signOut } from "firebase/auth";
+import { CssBaseline, Box, Toolbar } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+
+import { auth, db } from "../hooks/initializeFirebase";
+import DashboardNavigation from "../components/DashboardNavigation";
+import DashboardAppBar from "../components/DashboardAppbar";
+
 import RoutePlanner from "./RoutePlanner";
 import SavedRoutes from "../components/SavedRoutes";
 import SourcingInsights from "../components/ProduceInsights";
@@ -23,172 +16,123 @@ import DeliveryInsights from "../components/DeliveryInsights";
 import ProduceRequestFeed from "../components/ProduceRequestFeed";
 import FarmFinder from "../components/FarmFinder";
 import Settings from "../components/Settings";
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../hooks/initializeFirebase";
-
+import { theme } from "../branding";
 
 const drawerWidth = 240;
+const appBarHeight = 64;
+const collapsedDrawerWidth = 64;
 
 const Dashboard: FunctionalComponent = () => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("home");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
   const [role, setRole] = useState<"farmer" | "restaurant" | null>(null);
+  const [loading, setLoading] = useState(true);
+    const [drawerExpanded, setDrawerExpanded] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged (auth, async (currentUser) => {
+    const unsub = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      
+
       if (currentUser) {
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDoc = await getDoc(userDocRef);
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setRole(userData.role || null);
-        } else {
-          setRole(null);
-        }
-      }else{
+        setRole(userDoc.exists() ? userDoc.data().role || null : null);
+      } else {
         setRole(null);
       }
-
     });
+
     return unsub;
   }, []);
 
-  const renderTabContent = () => {
-    if (role === "farmer") {
-      return {
-        home: <ProduceRequestFeed />,
-        plan: <RoutePlanner />,
-        saved: <SavedRoutes />,
-        insights: <DeliveryInsights />,
-        settings: <Settings user={user} />,
-      }[currentTab];
-    } else if (role === "restaurant") {
-      return {
-        home: <FarmFinder />,
-        plan: <RoutePlanner />,
-        saved: <SavedRoutes />,
-        insights: <SourcingInsights />,
-        settings: <Settings user={user} />,
-      }[currentTab];
-    }
-  };
-
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-
   const handleLogout = async () => {
     await signOut(auth);
-    navigate('/signin'); // or navigate to login if you prefer
+    navigate("/signin");
   };
 
-  const drawer = (
-    <div>
-      <Toolbar />
-      <List>
-        <ListItemButton
-          selected={currentTab === "home"}
-          onClick={() => setCurrentTab("home")}
-        >
-          <ListItemText primary="Home" />
-        </ListItemButton>
-        <ListItemButton
-          selected={currentTab === "plan"}
-          onClick={() => setCurrentTab("plan")}
-        >
-          <ListItemText primary="Route Optimizer" />
-        </ListItemButton>
-        <ListItemButton
-          selected={currentTab === "saved"}
-          onClick={() => setCurrentTab("saved")}
-        >
-          <ListItemText primary="Saved Routes" />
-        </ListItemButton>
-        <ListItemButton
-          selected={currentTab === "insights"}
-          onClick={() => setCurrentTab("insights")}
-        >
-          <ListItemText primary="Route Insights" />
-        </ListItemButton>
-        <ListItemButton
-          selected={currentTab === "settings"}
-          onClick={() => setCurrentTab("settings")}
-        >
-          <ListItemText primary="Settings" />
-        </ListItemButton>
-        {/* Show logout in drawer only on mobile */}
-        <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', pl: 2, mt: 2 }}>
-          <IconButton color="inherit" onClick={handleLogout} title="Logout">
-            <Typography variant="body2" sx={{ mr: 1 }}>Logout</Typography>
-            <LogoutIcon />
-          </IconButton>
-          <Typography variant="body2" sx={{ ml: 1 }}>Logout</Typography>
-        </Box>
-      </List>
-    </div>
-  );
+  const getTabContent = () => {
+    const farmerTabs = [<ProduceRequestFeed />, <RoutePlanner />, <SavedRoutes />, <DeliveryInsights />, <Settings user={user} />];
+    const restaurantTabs = [<FarmFinder />, <RoutePlanner />, <SavedRoutes />, <SourcingInsights />, <Settings user={user} />];
 
-  if (loading) return <Container><p>Loading...</p></Container>;
-  if (!user) return <Container><p>User not signed in.</p></Container>;
+    return role === "farmer"
+      ? farmerTabs[activeTab] || null
+      : role === "restaurant"
+      ? restaurantTabs[activeTab] || null
+      : null;
+  };
+
+  if (loading) return <Box p={3}>Loading...</Box>;
+  if (!user) return <Box p={3}>User not signed in.</Box>;
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor: theme.palette.background.default }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: "none" } }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Routecast Dashboard
-          </Typography>
-          {/* Show logout in app bar only on desktop */}
-          <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            <IconButton color="inherit" onClick={handleLogout} title="Logout">
-              <LogoutIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
 
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
+      {/* AppBar (Fixed at Top) */}
+      <Box
+        sx={{
+            position: "fixed",
+            top: 5,
+            pr: 2,
+            left: {
+              xs: 0,
+              md: `${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px`,
+            },
+            width: {
+              xs: "100%",
+              md: `calc(100% - ${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px)`,
+            },
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
+        <DashboardAppBar
+          isMobile={window.innerWidth < 600}
+          onMenuClick={() => setMobileOpen(!mobileOpen)}
+          onAccount={() => setActiveTab(4)}
+          breadcrumb={{
+            title:
+              role === "farmer"
+                ? ["Produce Requests", "Route Optimizer", "Saved Routes", "Delivery Insights", "Settings"][activeTab]
+                : ["Farm Finder", "Route Optimizer", "Saved Routes", "Sourcing Insights", "Settings"][activeTab],
+            path: "",
           }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
+        />
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
-        <Toolbar />
-        {renderTabContent()}
+      {/* Side Navigation Drawer */}
+      <DashboardNavigation
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isMobile={window.innerWidth < 600}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+        drawerWidth={drawerWidth}
+        onLogout={handleLogout}
+        onLogoClick={() => setActiveTab(0)}
+        setExpanded={setDrawerExpanded}
+        expanded={drawerExpanded}
+      />
+
+      {/* Main Content Area */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerExpanded ? drawerWidth : 72}px)` },
+          ml: { sm: `${drawerExpanded ? drawerWidth : 72}px` },
+          mt: `${appBarHeight}px`,
+        }}
+      >
+        <Toolbar /> {/* Spacer to offset fixed AppBar */}
+        {getTabContent()}
       </Box>
     </Box>
   );
-}
+};
 
 export default Dashboard;

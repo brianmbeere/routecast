@@ -1,14 +1,16 @@
 import { Button, Card, CardContent, Container, Grid, Typography, Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { type FunctionalComponent } from "preact";
+import { brandPalette } from "../branding";
+import logoLanding from "../assets/routecast-logo-landing.png";
 
 const LandingPage: FunctionalComponent = () => {
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #f8fafc, #c7d2fe)",
-        color: "#1e293b",
+        background: `linear-gradient(120deg, ${brandPalette.background.default} 0%, ${brandPalette.accent.main} 100%)`,
+        color: brandPalette.text.primary,
         display: "flex",
         flexDirection: "column",
         boxSizing: "border-box",
@@ -22,9 +24,8 @@ const LandingPage: FunctionalComponent = () => {
           position: "sticky",
           top: 0,
           zIndex: 1000,
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          backdropFilter: "blur(6px)",
-          borderBottom: "1px solid #e2e8f0",
+          backgroundColor: brandPalette.background.paper,
+          borderBottom: `1px solid ${brandPalette.accent.main}`,
           px: 3,
           py: 2,
           display: "flex",
@@ -32,75 +33,72 @@ const LandingPage: FunctionalComponent = () => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
-          Routecast
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box component="img" src={logoLanding} alt="Routecast Logo" sx={{ height: 48, width: "auto", background: "transparent" }} />
+        </Box>
         <Button
-          variant="outlined"
-          href="https://calendly.com/briannjenga413/30min"
-          target="_blank"
-          rel="noopener noreferrer"
+          variant="contained"
+          href="/signin"
+          sx={{
+            background: brandPalette.primary.main,
+            color: brandPalette.primary.contrastText,
+            fontWeight: 700,
+            borderRadius: 2,
+            px: 3,
+            boxShadow: "0 2px 8px rgba(58,131,116,0.08)",
+            ':hover': {
+              background: brandPalette.secondary.main,
+              color: brandPalette.secondary.contrastText,
+            },
+          }}
         >
-          Request Demo
+          Get Started
         </Button>
       </Box>
 
       {/* Hero Section */}
-      <Container maxWidth="md" sx={{ py: 6, textAlign: "center" }}>
+      <Container maxWidth="md" sx={{ py: 8, textAlign: "center" }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
           <Box
             component="img"
-            src="/Logistics-rafiki.svg"
-            alt="City navigation illustration"
-            sx={{ width: "100%", maxWidth: 400, mx: "auto", mb: 3 }}
+            src={logoLanding}
+            alt="Connecting Farms to Tables"
+            sx={{ width: "100%", maxWidth: 500, mx: "auto", mb: 3 }}
           />
-          <Typography variant="h3" component="h2" fontWeight="bold" color="primary" gutterBottom>
-            Smarter Routes for Smarter Logistics
+          <Typography variant="h6" color={brandPalette.text.secondary} sx={{ maxWidth: 600, mx: "auto" }}>
+            Routecast connects farmers, restaurants, and local markets with optimized, sustainable delivery routes. Reduce waste, save fuel, and deliver fresher produce faster.
           </Typography>
-          <Typography variant="h6" color="textSecondary" paragraph>
-            Plan fuel-efficient, weather-aware, height-safe truck routes in seconds. Designed for fleet managers, drivers, and logistic companies.
-          </Typography>
-          <Button variant="contained" size="large" href="/signin" sx={{ mt: 3 }}>
-            Try Routecast
+          <Button variant="contained" size="large" href="/signin" sx={{ mt: 4, background: brandPalette.primary.main, color: brandPalette.primary.contrastText, fontWeight: 700, borderRadius: 2, px: 4, fontSize: 20, boxShadow: "0 2px 8px rgba(58,131,116,0.08)", ':hover': { background: brandPalette.secondary.main, color: brandPalette.secondary.contrastText } }}>
+            Start Planning
           </Button>
         </motion.div>
-
-        {/* Attribution */}
-        <Typography variant="caption" sx={{ mt: 2, display: "block", color: "gray" }}>
-          Illustration by{" "}
-          <a
-            href="https://storyset.com/city"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: "underline" }}
-          >
-            Storyset
-          </a>
-        </Typography>
       </Container>
 
       {/* Features Section */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Typography variant="h4" fontWeight="bold" color={brandPalette.primary.main} align="center" gutterBottom sx={{ mb: 6 }}>
+          Why Routecast?
+        </Typography>
         <Grid container spacing={4}>
           {[
             {
-              title: "🚣️ Truck-Safe Routing",
-              desc: "Plan routes with weight and height limits in mind. Avoid restricted roads and low overpasses.",
+              title: "🚚 Optimized Farm-to-Table Delivery",
+              desc: "Connect farms, markets, and restaurants with the most efficient, sustainable routes—minimizing food miles and maximizing freshness.",
             },
             {
-              title: "🌤️ Weather-Aware ETA",
-              desc: "Dynamic ETAs based on live weather and road conditions, reducing unexpected delays.",
+              title: "🌱 Reduce Waste, Boost Profit",
+              desc: "Smart routing means less spoilage, fewer empty miles, and more revenue for every stakeholder in the supply chain.",
             },
             {
-              title: "⛽ Fuel Cost Optimization",
-              desc: "Save on fuel costs with optimized paths that reduce idle time and distance.",
+              title: "📦 Real-Time Tracking & Insights",
+              desc: "Monitor deliveries, track produce freshness, and get actionable insights to improve every route.",
             },
           ].map((feature, index) => (
-            <Grid columns={{ xs: 12, sm: 6, md: 4 }} key={index}>
+            <Grid key={index} sx={{ xs: 12, sm: 6, md: 4 }}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -108,12 +106,12 @@ const LandingPage: FunctionalComponent = () => {
                 transition={{ delay: index * 0.2 }}
                 style={{ height: "100%" }}
               >
-                <Card elevation={3} sx={{ height: "100%" }}>
+                <Card elevation={3} sx={{ height: "100%", borderRadius: 3, background: brandPalette.background.paper }}>
                   <CardContent>
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    <Typography variant="h6" fontWeight="bold" color={brandPalette.secondary.main} gutterBottom>
                       {feature.title}
                     </Typography>
-                    <Typography variant="body1">{feature.desc}</Typography>
+                    <Typography variant="body1" color={brandPalette.text.primary}>{feature.desc}</Typography>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -123,7 +121,7 @@ const LandingPage: FunctionalComponent = () => {
       </Container>
 
       {/* Footer */}
-      <Box component="footer" sx={{ textAlign: "center", py: 4, color: "#64748b" }}>
+      <Box component="footer" sx={{ textAlign: "center", py: 4, color: brandPalette.text.secondary, fontWeight: 500, letterSpacing: 1 }}>
         © {new Date().getFullYear()} Routecast. All rights reserved.
       </Box>
     </Box>
