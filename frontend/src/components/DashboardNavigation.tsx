@@ -3,8 +3,8 @@ import {
   Divider, ListItemButton, Button, Toolbar, Box, Tooltip, Typography, IconButton
 } from "@mui/material";
 import {
-  RouteIcon,LogoutIcon,DashboardIcon, DrawerExpandIcon, DrawerCollapseIcon,
-  RestaurantIcon,RequestIcon,
+  RouteIcon,LogoutIcon, DrawerExpandIcon, DrawerCollapseIcon,
+  RestaurantIcon,RequestIcon, InventoryIcon, AnalyticsIcon,
 } from "./SVGIcons";
 import { useTheme } from "@mui/material/styles";
 import { brandPalette } from "../branding";
@@ -25,9 +25,10 @@ interface DashboardNavigationProps {
 
 const routecastSections = [
   { label: "Produce Requests", icon: (color: string) => <RestaurantIcon style={{ color }} /> },
+  { label: "My Inventory", icon: (color: string) => <InventoryIcon style={{ color }} /> },
   { label: "Route Optimizer", icon: (color: string) => <RequestIcon style={{ color }} /> },
   { label: "Saved Routes", icon: (color: string) => <RouteIcon style={{ color }} /> },
-  { label: "Delivery Insights", icon: (color: string) => <DashboardIcon style={{ color }} /> },
+  { label: "Analytics", icon: (color: string) => <AnalyticsIcon style={{ color }} /> },
   { label: "Settings", icon: (color: string) => <DrawerExpandIcon style={{ color }} /> },
 ];
 

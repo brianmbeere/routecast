@@ -17,11 +17,11 @@ export type ProduceRequest = {
 export const mockProduceRequests: ProduceRequest[] = [
   {
     id: 'req-1',
-    restaurantName: 'Green Spoon Bistro',
+    restaurantName: 'The Green Well',
     location: {
-      address: '123 Main St, Springfield',
-      lat: 40.7128,
-      lng: -74.0060,
+      address: '924 Cherry Street Southeast, Grand Rapids, Michigan 49506, United States',
+      lat: 42.9561,
+      lng: -85.6366,
     },
     produce: 'Tomatoes',
     quantity: '20kg',
@@ -29,11 +29,11 @@ export const mockProduceRequests: ProduceRequest[] = [
   },
   {
     id: 'req-2',
-    restaurantName: 'Urban Roots Food Truck',
+    restaurantName: 'The Old Goat',
     location: {
-      address: '456 Market Ave, Springfield',
-      lat: 40.7138,
-      lng: -74.0020,
+      address: '2434 Eastern Avenue Southeast, Grand Rapids, Michigan 49507, United States',
+      lat: 42.9197,
+      lng: -85.6476,
     },
     produce: 'Kale',
     quantity: '10kg',
@@ -41,11 +41,11 @@ export const mockProduceRequests: ProduceRequest[] = [
   },
   {
     id: 'req-3',
-    restaurantName: 'Harvest Table',
+    restaurantName: 'Snug Harbor',
     location: {
-      address: '789 Oak Rd, Springfield',
-      lat: 40.7150,
-      lng: -74.0100,
+      address: '311 South Harbor Drive, Grand Haven, Michigan 49417, United States',
+      lat: 43.0622,
+      lng: -86.2471,
     },
     produce: 'Carrots',
     quantity: '15kg',

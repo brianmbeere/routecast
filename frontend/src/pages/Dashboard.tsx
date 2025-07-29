@@ -12,11 +12,13 @@ import DashboardAppBar from "../components/DashboardAppbar";
 import RoutePlanner from "./RoutePlanner";
 import SavedRoutes from "../components/SavedRoutes";
 import SourcingInsights from "../components/ProduceInsights";
-import DeliveryInsights from "../components/DeliveryInsights";
+import ProduceAnalytics from "../components/ProduceAnalytics";
 import ProduceRequestFeed from "../components/ProduceRequestFeed";
+import ProduceInventoryManager from "../components/ProduceInventoryManager";
 import FarmFinder from "../components/FarmFinder";
 import Settings from "../components/Settings";
 import { theme } from "../branding";
+import { SelectedRequestsProvider } from "../context/SelectedRequestsContext";
 
 const drawerWidth = 240;
 const appBarHeight = 64;
@@ -55,7 +57,7 @@ const Dashboard: FunctionalComponent = () => {
   };
 
   const getTabContent = () => {
-    const farmerTabs = [<ProduceRequestFeed />, <RoutePlanner />, <SavedRoutes />, <DeliveryInsights />, <Settings user={user} />];
+    const farmerTabs = [<ProduceRequestFeed />, <ProduceInventoryManager />, <RoutePlanner />, <SavedRoutes />, <ProduceAnalytics />, <Settings user={user} />];
     const restaurantTabs = [<FarmFinder />, <RoutePlanner />, <SavedRoutes />, <SourcingInsights />, <Settings user={user} />];
 
     return role === "farmer"
@@ -69,69 +71,71 @@ const Dashboard: FunctionalComponent = () => {
   if (!user) return <Box p={3}>User not signed in.</Box>;
 
   return (
-    <Box sx={{ display: "flex", backgroundColor: theme.palette.background.default }}>
-      <CssBaseline />
+    <SelectedRequestsProvider>
+      <Box sx={{ display: "flex", backgroundColor: theme.palette.background.default }}>
+        <CssBaseline />
 
-      {/* AppBar (Fixed at Top) */}
-      <Box
-        sx={{
-            position: "fixed",
-            top: 5,
-            pr: 2,
-            left: {
-              xs: 0,
-              md: `${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px`,
-            },
-            width: {
-              xs: "100%",
-              md: `calc(100% - ${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px)`,
-            },
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-        }}
-      >
-        <DashboardAppBar
-          isMobile={window.innerWidth < 600}
-          onMenuClick={() => setMobileOpen(!mobileOpen)}
-          onAccount={() => setActiveTab(4)}
-          breadcrumb={{
-            title:
-              role === "farmer"
-                ? ["Produce Requests", "Route Optimizer", "Saved Routes", "Delivery Insights", "Settings"][activeTab]
-                : ["Farm Finder", "Route Optimizer", "Saved Routes", "Sourcing Insights", "Settings"][activeTab],
-            path: "",
+        {/* AppBar (Fixed at Top) */}
+        <Box
+          sx={{
+              position: "fixed",
+              top: 5,
+              pr: 2,
+              left: {
+                xs: 0,
+                md: `${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px`,
+              },
+              width: {
+                xs: "100%",
+                md: `calc(100% - ${drawerExpanded ? drawerWidth : collapsedDrawerWidth}px)`,
+              },
+              zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
+        >
+          <DashboardAppBar
+            isMobile={window.innerWidth < 600}
+            onMenuClick={() => setMobileOpen(!mobileOpen)}
+            onAccount={() => setActiveTab(5)}
+            breadcrumb={{
+              title:
+                role === "farmer"
+                  ? ["Produce Requests", "My Inventory", "Route Optimizer", "Saved Routes", "Analytics", "Settings"][activeTab]
+                  : ["Farm Finder", "Route Optimizer", "Saved Routes", "Sourcing Insights", "Settings"][activeTab],
+              path: "",
+            }}
+          />
+        </Box>
+
+        {/* Side Navigation Drawer */}
+        <DashboardNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isMobile={window.innerWidth < 600}
+          mobileOpen={mobileOpen}
+          setMobileOpen={setMobileOpen}
+          drawerWidth={drawerWidth}
+          onLogout={handleLogout}
+          onLogoClick={() => setActiveTab(0)}
+          setExpanded={setDrawerExpanded}
+          expanded={drawerExpanded}
         />
-      </Box>
 
-      {/* Side Navigation Drawer */}
-      <DashboardNavigation
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isMobile={window.innerWidth < 600}
-        mobileOpen={mobileOpen}
-        setMobileOpen={setMobileOpen}
-        drawerWidth={drawerWidth}
-        onLogout={handleLogout}
-        onLogoClick={() => setActiveTab(0)}
-        setExpanded={setDrawerExpanded}
-        expanded={drawerExpanded}
-      />
-
-      {/* Main Content Area */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerExpanded ? drawerWidth : 72}px)` },
-          ml: { sm: `${drawerExpanded ? drawerWidth : 72}px` },
-          mt: `${appBarHeight}px`,
-        }}
-      >
-        <Toolbar /> {/* Spacer to offset fixed AppBar */}
-        {getTabContent()}
+        {/* Main Content Area */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${drawerExpanded ? drawerWidth : 72}px)` },
+            ml: { sm: `${drawerExpanded ? drawerWidth : 72}px` },
+            mt: `${appBarHeight}px`,
+          }}
+        >
+          <Toolbar /> {/* Spacer to offset fixed AppBar */}
+          {getTabContent()}
+        </Box>
       </Box>
-    </Box>
+    </SelectedRequestsProvider>
   );
 };
 

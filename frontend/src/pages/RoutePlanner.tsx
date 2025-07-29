@@ -1,4 +1,5 @@
-import { useState } from "preact/hooks";
+import { useState, useContext, useEffect } from "preact/hooks";
+import { SelectedRequestsContext } from "../context/SelectedRequestsContext";
 import {
   Container,
   Button,
@@ -20,11 +21,31 @@ import AutocompleteTextField from "../components/route/AutoCompleteTextField";
 import { ContentCopyIcon } from '../components/SVGIcons';
 
 const RoutePlanner: FunctionalComponent = () => {
+  const ctx = useContext(SelectedRequestsContext);
   const [pickup, setPickup] = useState("");
-  const [stops, setStops] = useState([{ address: "" }]);
+  // If there are selected requests, use their addresses as stops; otherwise, default to one empty stop
+  const [stops, setStops] = useState<{ address: string }[]>(
+    ctx?.selectedRequests && ctx.selectedRequests.length > 0
+      ? ctx.selectedRequests.map(req => ({ address: req.location.address }))
+      : [{ address: "" }]
+  );
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<OptimizeRouteResponse | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // If selectedRequests changes, update stops accordingly (but only if not already matching)
+  useEffect(() => {
+    if (ctx?.selectedRequests && ctx.selectedRequests.length > 0) {
+      const selectedAddresses = ctx.selectedRequests.map(req => req.location.address);
+      // Only update stops if they don't match the selected addresses
+      if (
+        stops.length !== selectedAddresses.length ||
+        stops.some((stop, i) => stop.address !== selectedAddresses[i])
+      ) {
+        setStops(selectedAddresses.map(address => ({ address })));
+      }
+    }
+  }, [ctx?.selectedRequests]);
 
   const handleStopChange = (index: number, value: string) => {
     const updated = [...stops];
@@ -68,6 +89,20 @@ const RoutePlanner: FunctionalComponent = () => {
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Plan Your Delivery Route
       </Typography>
+
+      {/* Show selected produce requests as stops, if any */}
+      {ctx?.selectedRequests && ctx.selectedRequests.length > 0 && (
+        <Paper elevation={2} sx={{ p: 2, mb: 3, bgcolor: '#f5f5f5' }}>
+          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+            Selected Produce Requests:
+          </Typography>
+          {ctx.selectedRequests.map((req) => (
+            <Box key={req.id} sx={{ mb: 1 }}>
+              <strong>{req.restaurantName}</strong> — {req.produce} — {req.location.address}
+            </Box>
+          ))}
+        </Paper>
+      )}
 
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Box

@@ -2,9 +2,13 @@ import os
 from fastapi import FastAPI
 import uvicorn
 from app.core.config import setup_cors
-from app.routes import route,views
+from app.routes import route, views, user, produce, requests, delivery, webhooks, analytics, menurithm
 
-app = FastAPI()
+app = FastAPI(
+    title="Routecast API",
+    description="AI-powered Route & Logistics Optimizer with Produce Management",
+    version="1.0.0"
+)
 
 # Add CORS, middleware, etc
 setup_cors(app)
@@ -12,6 +16,13 @@ setup_cors(app)
 # Register routers
 app.include_router(views.router)
 app.include_router(route.router)
+app.include_router(user.router, prefix="/api")
+app.include_router(produce.router)
+app.include_router(requests.router)
+app.include_router(delivery.router)
+app.include_router(webhooks.router)
+app.include_router(analytics.router)
+app.include_router(menurithm.router)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

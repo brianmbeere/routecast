@@ -149,3 +149,132 @@ export const RemoveCircleOutlineIcon = (props: React.SVGProps<SVGSVGElement>) =>
     <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
+
+// Produce/Farm related icons for new implementation
+export const InventoryIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+    <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <path d="M3 9h18M9 3v18" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const ProduceIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" 
+          fill="currentColor"/>
+    <circle cx="12" cy="10" r="2" fill="white"/>
+  </svg>
+);
+
+export const AcceptIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const DeclineIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const DeliveryIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M1 3h15v13H1z" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <path d="M16 8h4l3 3v5h-3m-4 0V8" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" strokeWidth="2" fill="none"/>
+  </svg>
+);
+
+export const AnalyticsIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M3 3v18h18" stroke="currentColor" strokeWidth="2"/>
+    <path d="M18 8l-4 4-2-2-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    <circle cx="18" cy="8" r="1" fill="currentColor"/>
+    <circle cx="6" cy="16" r="1" fill="currentColor"/>
+  </svg>
+);
+
+export const RefreshIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M3 3v6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M21 21v-6h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L3 9m18 6l-2.64 3.36A9 9 0 0 1 3.51 15" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const SettingsIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" 
+          stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const MoneyIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+    <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8 15s1.5-2 4-2 4 2 4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+export const CalendarIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
+    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
+    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const LocationIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2"/>
+    <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const WeightIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M6.5 6.5h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M6 8l1.5 8h9L18 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="9" cy="5" r="2" stroke="currentColor" strokeWidth="2"/>
+    <circle cx="15" cy="5" r="2" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+export const OrganicIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <path d="M12 2C13.5 4 15 7 15 10a3 3 0 0 1-6 0c0-3 1.5-6 3-8z" stroke="currentColor" strokeWidth="2" fill="currentColor"/>
+    <path d="M8 10c0 0-2 2-2 5a4 4 0 0 0 8 0c0-3-2-5-2-5" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <path d="M12 17v5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+export const SearchIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+    <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const FilterIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46" stroke="currentColor" strokeWidth="2" fill="none"/>
+  </svg>
+);
+
+export const MoreVertIcon = (props: IconProps) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    <circle cx="12" cy="5" r="1" fill="currentColor"/>
+    <circle cx="12" cy="19" r="1" fill="currentColor"/>
+  </svg>
+);
