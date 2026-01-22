@@ -178,4 +178,7 @@ Apache 2.0 License – see [LICENSE](./LICENSE)
 
 ## 👤 Author
 
-Built as a demonstration of full-stack software engineering capabilities in agricultural technology and logistics optimization.
+**Brian Mbeere**  
+Full-Stack Software Engineer specializing in agricultural technology and logistics optimization.
+
+Built as a demonstration of expertise in scalable web applications, API design, and real-world problem solving for local food systems.
