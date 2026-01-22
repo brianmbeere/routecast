@@ -30,7 +30,7 @@ class ProduceRequest(Base):
     __tablename__ = "produce_requests"
 
     id = Column(Integer, primary_key=True, index=True)
-    restaurant_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    restaurant_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Nullable for Menurithm requests
     restaurant_name = Column(String, nullable=False)
     produce_type = Column(String, nullable=False)
     quantity_needed = Column(Float, nullable=False)

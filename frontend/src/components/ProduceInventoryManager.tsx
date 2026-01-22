@@ -115,20 +115,27 @@ const ProduceInventoryManager = () => {
     try {
       setSubmitting(true);
       
-      const submitData = {
-        ...formData,
+      const baseData = {
+        produce_type: formData.produce_type,
+        variety: formData.variety || undefined,
+        quantity_available: formData.quantity_available,
+        unit: formData.unit,
+        price_per_unit: formData.price_per_unit,
         harvest_date: formData.harvest_date ? new Date(formData.harvest_date).toISOString() : undefined,
         expiry_date: formData.expiry_date ? new Date(formData.expiry_date).toISOString() : undefined,
+        location: formData.location,
         latitude: formData.latitude || undefined,
         longitude: formData.longitude || undefined,
-        variety: formData.variety || undefined,
+        organic: formData.organic,
         description: formData.description || undefined
       };
 
       if (editingItem) {
-        await produceInventoryApi.update(editingItem.id, submitData);
+        // Updates can include is_available
+        await produceInventoryApi.update(editingItem.id, { ...baseData, is_available: formData.is_available });
       } else {
-        await produceInventoryApi.create(submitData);
+        // Create does not accept is_available per backend schema
+        await produceInventoryApi.create(baseData);
       }
 
       await loadInventory();

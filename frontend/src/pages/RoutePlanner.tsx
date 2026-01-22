@@ -8,6 +8,13 @@ import {
   Paper,
   IconButton,
   Tooltip,
+  Alert,
+  Chip,
+  Stack,
+  Checkbox,
+  FormControlLabel,
+  Divider,
+  CircularProgress,
 } from "@mui/material";
 import { type FunctionalComponent } from "preact";
 import {
@@ -15,6 +22,7 @@ import {
   type OptimizeRouteRequest,
   type OptimizeRouteResponse,
 } from "../api/routeoptimize";
+import { produceRequestApi, type ProduceRequest as BackendProduceRequest } from "../api/produceApi";
 import StopInputList from "../components/route/StopInputList";
 import MapboxRouteMap from "../components/route/MapboxRouteMap";
 import AutocompleteTextField from "../components/route/AutoCompleteTextField";
@@ -32,6 +40,57 @@ const RoutePlanner: FunctionalComponent = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<OptimizeRouteResponse | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Accepted orders from backend
+  const [acceptedOrders, setAcceptedOrders] = useState<BackendProduceRequest[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<number>>(new Set());
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+
+  // Load accepted orders on mount
+  useEffect(() => {
+    loadAcceptedOrders();
+  }, []);
+
+  const loadAcceptedOrders = async () => {
+    try {
+      setLoadingOrders(true);
+      setOrdersError(null);
+      const orders = await produceRequestApi.getRequests({ status: "accepted" });
+      setAcceptedOrders(orders);
+      // Auto-select all accepted orders by default
+      setSelectedOrderIds(new Set(orders.map(o => o.id)));
+    } catch (err) {
+      console.error("Failed to load accepted orders:", err);
+      setOrdersError("Failed to load accepted orders");
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  // Toggle order selection
+  const toggleOrderSelection = (orderId: number) => {
+    setSelectedOrderIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  // Apply selected orders as stops
+  const applySelectedOrdersAsStops = () => {
+    const selectedOrders = acceptedOrders.filter(o => selectedOrderIds.has(o.id));
+    if (selectedOrders.length === 0) return;
+    
+    const newStops = selectedOrders.map(order => ({
+      address: order.delivery_address
+    }));
+    setStops(newStops);
+  };
 
   // If selectedRequests changes, update stops accordingly (but only if not already matching)
   useEffect(() => {
@@ -85,10 +144,99 @@ const RoutePlanner: FunctionalComponent = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="lg" sx={{ py: 6 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Plan Your Delivery Route
       </Typography>
+
+      {/* Accepted Orders Panel */}
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h6">
+            Accepted Orders
+          </Typography>
+          <Stack direction="row" spacing={1}>
+            <Button 
+              variant="outlined" 
+              size="small" 
+              onClick={loadAcceptedOrders}
+              disabled={loadingOrders}
+            >
+              {loadingOrders ? "Loading..." : "Refresh"}
+            </Button>
+            <Button 
+              variant="contained" 
+              size="small" 
+              onClick={applySelectedOrdersAsStops}
+              disabled={selectedOrderIds.size === 0}
+            >
+              Use Selected as Stops ({selectedOrderIds.size})
+            </Button>
+          </Stack>
+        </Box>
+
+        {ordersError && (
+          <Alert severity="error" sx={{ mb: 2 }}>{ordersError}</Alert>
+        )}
+
+        {loadingOrders ? (
+          <Box display="flex" justifyContent="center" py={2}>
+            <CircularProgress size={24} />
+          </Box>
+        ) : acceptedOrders.length === 0 ? (
+          <Alert severity="info">
+            No accepted orders found. Accept produce requests from the Request Feed to see them here.
+          </Alert>
+        ) : (
+          <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+            {acceptedOrders.map((order) => (
+              <Box 
+                key={order.id} 
+                sx={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  p: 1,
+                  borderRadius: 1,
+                  mb: 1,
+                  bgcolor: selectedOrderIds.has(order.id) ? "action.selected" : "background.paper",
+                  border: 1,
+                  borderColor: selectedOrderIds.has(order.id) ? "primary.main" : "divider",
+                  cursor: "pointer",
+                  "&:hover": { bgcolor: "action.hover" }
+                }}
+                onClick={() => toggleOrderSelection(order.id)}
+              >
+                <Checkbox 
+                  checked={selectedOrderIds.has(order.id)} 
+                  size="small"
+                  sx={{ mr: 1 }}
+                />
+                <Box flex={1}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      {order.restaurant_name}
+                    </Typography>
+                    <Chip 
+                      label={order.produce_type} 
+                      size="small" 
+                      color="primary" 
+                      variant="outlined" 
+                    />
+                    <Chip 
+                      label={`${order.quantity_needed} ${order.unit}`} 
+                      size="small" 
+                      variant="outlined" 
+                    />
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary">
+                    📍 {order.delivery_address}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Paper>
 
       {/* Show selected produce requests as stops, if any */}
       {ctx?.selectedRequests && ctx.selectedRequests.length > 0 && (

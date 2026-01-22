@@ -75,7 +75,7 @@ class ProduceRequestUpdate(BaseModel):
 
 class ProduceRequestResponse(BaseModel):
     id: int
-    restaurant_id: int
+    restaurant_id: Optional[int]  # Nullable for Menurithm requests
     restaurant_name: str
     produce_type: str
     quantity_needed: float

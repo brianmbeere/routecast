@@ -28,7 +28,7 @@ export interface ProduceInventory {
 
 export interface ProduceRequest {
   id: number;
-  restaurant_id: number;
+  restaurant_id?: number;  // Optional for Menurithm requests
   restaurant_name: string;
   produce_type: string;
   quantity_needed: number;
@@ -207,7 +207,7 @@ export const publicProduceApi = {
 export const produceRequestApi = {
   async create(request: CreateProduceRequest): Promise<ProduceRequest> {
     const headers = await getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/requests`, {
+    const response = await fetch(`${API_BASE_URL}/api/requests/`, {
       method: 'POST',
       headers,
       body: JSON.stringify(request)
@@ -236,7 +236,7 @@ export const produceRequestApi = {
       });
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/requests?${searchParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/requests/?${searchParams}`, {
       method: 'GET',
       headers
     });
@@ -302,15 +302,29 @@ export const deliveryRouteApi = {
 
   async updateStatus(id: number, status: string): Promise<void> {
     const headers = await getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/routes/${id}/status`, {
+    const response = await fetch(`${API_BASE_URL}/api/routes/${id}/status?status=${encodeURIComponent(status)}`, {
       method: 'PUT',
-      headers,
-      body: JSON.stringify({ status })
+      headers
     });
     
     if (!response.ok) {
       throw new Error(`Failed to update route status: ${response.statusText}`);
     }
+  },
+
+  async getAllRoutes(): Promise<DeliveryRoute[]> {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/api/routes/all`, {
+      method: 'GET',
+      headers
+    });
+    
+    if (!response.ok) {
+      // Fallback to active routes if /all endpoint doesn't exist
+      return this.getActiveRoutes();
+    }
+    
+    return response.json();
   }
 };
 

@@ -60,7 +60,8 @@ const AutocompleteTextField = ({ label, value, onSelect }: Props) => {
       inputValue={value}
       onInputChange={(_, newInput, reason) => {
         onSelect(newInput);
-        if (reason === "input") setInputDirty(true);
+        // Enable dirty state on any input change, not just "input" reason
+        if (reason === "input" || reason === "clear") setInputDirty(true);
       }}
       onChange={(_, newValue) => {
         if (typeof newValue === "string") {
@@ -68,6 +69,10 @@ const AutocompleteTextField = ({ label, value, onSelect }: Props) => {
           setOptions([]);
           setInputDirty(false); 
         }
+      }}
+      onFocus={() => {
+        // When user focuses on a pre-filled field, enable suggestions
+        if (value.length > 0) setInputDirty(true);
       }}
       open={inputDirty && value.length > 0 && options.length > 0}
       renderOption={(props, option) => <li {...props}>{option}</li>}

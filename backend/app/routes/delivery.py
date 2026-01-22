@@ -109,6 +109,22 @@ async def get_active_routes(
     
     return routes
 
+@router.get("/all", response_model=List[DeliveryRouteResponse])
+async def get_all_routes(
+    db: Session = Depends(get_db),
+    firebase_user: dict = Depends(verify_firebase_token)
+):
+    """Get all delivery routes for seller (including completed)"""
+    seller = db.query(User).filter(User.firebase_uid == firebase_user["uid"]).first()
+    if not seller:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    routes = db.query(DeliveryRoute).filter(
+        DeliveryRoute.seller_id == seller.id
+    ).order_by(DeliveryRoute.created_at.desc()).all()
+    
+    return routes
+
 @router.post("/{route_id}/optimize")
 async def re_optimize_route(
     route_id: int,
