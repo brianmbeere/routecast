@@ -1,9 +1,7 @@
 // API service for produce management endpoints
 import { auth } from "../hooks/initializeFirebase";
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-url.com' 
-  : 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 // Types matching backend schemas
 export interface ProduceInventory {
