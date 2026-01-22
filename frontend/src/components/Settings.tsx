@@ -169,7 +169,7 @@ const Settings: FunctionalComponent<{ user: User | null }> = ({ user }) => {
         </Box>
       ) : (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
@@ -196,7 +196,7 @@ const Settings: FunctionalComponent<{ user: User | null }> = ({ user }) => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -262,7 +262,7 @@ const Settings: FunctionalComponent<{ user: User | null }> = ({ user }) => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -278,7 +278,7 @@ const Settings: FunctionalComponent<{ user: User | null }> = ({ user }) => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>

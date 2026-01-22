@@ -101,7 +101,7 @@ async function getAuthHeaders(): Promise<HeadersInit> {
 
 // Produce Inventory API
 export const produceInventoryApi = {
-  async create(inventory: Omit<ProduceInventory, 'id' | 'seller_id' | 'created_at' | 'updated_at'>): Promise<ProduceInventory> {
+  async create(inventory: Omit<ProduceInventory, 'id' | 'seller_id' | 'created_at' | 'updated_at' | 'is_available'>): Promise<ProduceInventory> {
     const headers = await getAuthHeaders();
     const response = await fetch(`${API_BASE_URL}/api/produce/inventory`, {
       method: 'POST',

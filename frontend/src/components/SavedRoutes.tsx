@@ -4,7 +4,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   Button,
   Chip,
   CircularProgress,
@@ -20,6 +19,7 @@ import {
   Stack,
   LinearProgress,
   Paper,
+  Grid,
 } from "@mui/material";
 import { MoreVertIcon, DeleteIcon } from "./SVGIcons";
 import { deliveryRouteApi, type DeliveryRoute } from "../api/produceApi";
@@ -212,7 +212,7 @@ const SavedRoutes = () => {
           Real-time analytics demonstrating operational efficiency and environmental impact
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="primary">
                 {metrics.totalRoutes}
@@ -222,7 +222,7 @@ const SavedRoutes = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="success.main">
                 {metrics.completedRoutes}
@@ -232,7 +232,7 @@ const SavedRoutes = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="info.main">
                 {metrics.totalMilesSaved.toFixed(1)}
@@ -242,7 +242,7 @@ const SavedRoutes = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="warning.main">
                 {metrics.avgDeliveryTime.toFixed(0)}
@@ -252,7 +252,7 @@ const SavedRoutes = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="success.dark">
                 {metrics.co2Saved.toFixed(1)}
@@ -262,7 +262,7 @@ const SavedRoutes = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2}>
+          <Grid size={{ xs: 6, md: 2 }}>
             <Box textAlign="center">
               <Typography variant="h4" color="secondary.main">
                 {metrics.fuelSaved.toFixed(1)}
@@ -328,7 +328,7 @@ const SavedRoutes = () => {
       ) : (
         <Grid container spacing={2}>
           {routes.map((route) => (
-            <Grid item xs={12} md={6} lg={4} key={route.id}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={route.id}>
               <Card>
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="flex-start">
@@ -356,7 +356,7 @@ const SavedRoutes = () => {
                   <Divider sx={{ my: 1.5 }} />
 
                   <Grid container spacing={1}>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
                         Distance
                       </Typography>
@@ -364,7 +364,7 @@ const SavedRoutes = () => {
                         {route.total_distance_miles?.toFixed(1) || "—"} mi
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
                         Duration
                       </Typography>
@@ -372,7 +372,7 @@ const SavedRoutes = () => {
                         {route.estimated_duration_minutes || "—"} min
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
                         Delivery Date
                       </Typography>
@@ -380,7 +380,7 @@ const SavedRoutes = () => {
                         {formatDate(route.delivery_date)}
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
                         Created
                       </Typography>
@@ -464,7 +464,7 @@ const SavedRoutes = () => {
               <Divider />
 
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={{ xs: 6 }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Total Distance
                   </Typography>
@@ -472,7 +472,7 @@ const SavedRoutes = () => {
                     {selectedRoute.total_distance_miles?.toFixed(2) || "—"} miles
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={{ xs: 6 }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Est. Duration
                   </Typography>

@@ -12,8 +12,6 @@ import {
   Chip,
   Stack,
   Checkbox,
-  FormControlLabel,
-  Divider,
   CircularProgress,
 } from "@mui/material";
 import { type FunctionalComponent } from "preact";
