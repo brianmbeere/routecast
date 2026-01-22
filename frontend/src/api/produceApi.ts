@@ -205,7 +205,7 @@ export const publicProduceApi = {
 export const produceRequestApi = {
   async create(request: CreateProduceRequest): Promise<ProduceRequest> {
     const headers = await getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/requests/`, {
+    const response = await fetch(`${API_BASE_URL}/api/requests`, {
       method: 'POST',
       headers,
       body: JSON.stringify(request)
@@ -234,7 +234,7 @@ export const produceRequestApi = {
       });
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/requests/?${searchParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/requests?${searchParams}`, {
       method: 'GET',
       headers
     });

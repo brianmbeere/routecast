@@ -7,7 +7,8 @@ from app.routes import route, views, user, produce, requests, delivery, webhooks
 app = FastAPI(
     title="Routecast API",
     description="AI-powered Route & Logistics Optimizer with Produce Management",
-    version="1.0.0"
+    version="1.0.0",
+    redirect_slashes=False  # Prevent 307 redirects that break CORS
 )
 
 # Add CORS, middleware, etc
