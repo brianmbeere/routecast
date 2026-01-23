@@ -54,7 +54,7 @@ async def test_auth_check(
         "message": "Authentication successful"
     }
 
-@router.post("/", response_model=ProduceRequestResponse)
+@router.post("", response_model=ProduceRequestResponse)
 async def create_produce_request(
     request: ProduceRequestCreate,
     db: Session = Depends(get_db),
@@ -102,7 +102,7 @@ async def debug_get_produce_requests(
         print(f"❌ Error in debug endpoint: {e}")
         raise HTTPException(status_code=500, detail=f"Debug error: {str(e)}")
 
-@router.get("/", response_model=List[ProduceRequestResponse])
+@router.get("", response_model=List[ProduceRequestResponse])
 async def get_produce_requests(
     status: Optional[str] = Query(None),
     produce_type: Optional[str] = Query(None),
