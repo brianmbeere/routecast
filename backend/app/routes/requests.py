@@ -215,9 +215,17 @@ async def update_request_status(
         raise HTTPException(status_code=404, detail="Request not found")
 
     # Only farmers can accept/decline requests, restaurants can update their own
-    if user.role == "farmer" and updates.status in ["accepted", "declined"]:
+    if user.role == "farmer" and updates.status in ["accepted", "declined", "pending"]:
         old_status = request.status
-        request.assigned_seller_id = user.id if updates.status == "accepted" else None
+        
+        # If setting back to pending (un-accepting), clear the assigned seller
+        if updates.status == "pending":
+            request.assigned_seller_id = None
+        elif updates.status == "accepted":
+            request.assigned_seller_id = user.id
+        else:  # declined
+            request.assigned_seller_id = None
+            
         request.status = updates.status
         
         # Notify Menurithm if this was a Menurithm request
