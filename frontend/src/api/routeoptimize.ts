@@ -18,7 +18,7 @@ export type OptimizeRouteResponse = {
 export async function optimizeRoute(
   payload: OptimizeRouteRequest
 ): Promise<OptimizeRouteResponse> {
-  const response = await fetch(`${API_BASE_URL}/optimize-route`, {
+  const response = await fetch(`${API_BASE_URL}/api/optimize-route`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
