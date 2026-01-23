@@ -13,6 +13,11 @@ import {
   Stack,
   Checkbox,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { type FunctionalComponent } from "preact";
 import {
@@ -24,7 +29,7 @@ import { produceRequestApi, type ProduceRequest as BackendProduceRequest } from 
 import StopInputList from "../components/route/StopInputList";
 import MapboxRouteMap from "../components/route/MapboxRouteMap";
 import AutocompleteTextField from "../components/route/AutoCompleteTextField";
-import { ContentCopyIcon } from '../components/SVGIcons';
+import { ContentCopyIcon, DeleteIcon } from '../components/SVGIcons';
 
 const RoutePlanner: FunctionalComponent = () => {
   const ctx = useContext(SelectedRequestsContext);
@@ -44,6 +49,9 @@ const RoutePlanner: FunctionalComponent = () => {
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [selectedOrderIds, setSelectedOrderIds] = useState<Set<number>>(new Set());
   const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [removingOrderId, setRemovingOrderId] = useState<number | null>(null);
+  const [confirmRemoveDialogOpen, setConfirmRemoveDialogOpen] = useState(false);
+  const [orderToRemove, setOrderToRemove] = useState<BackendProduceRequest | null>(null);
 
   // Load accepted orders on mount
   useEffect(() => {
@@ -88,6 +96,44 @@ const RoutePlanner: FunctionalComponent = () => {
       address: order.delivery_address
     }));
     setStops(newStops);
+  };
+
+  // Open confirmation dialog to remove an accepted order
+  const handleRemoveOrderClick = (e: Event, order: BackendProduceRequest) => {
+    e.stopPropagation();
+    setOrderToRemove(order);
+    setConfirmRemoveDialogOpen(true);
+  };
+
+  // Close the confirmation dialog
+  const handleCloseRemoveDialog = () => {
+    setConfirmRemoveDialogOpen(false);
+    setOrderToRemove(null);
+  };
+
+  // Remove an accepted order (set status back to pending)
+  const handleConfirmRemoveOrder = async () => {
+    if (!orderToRemove) return;
+    
+    try {
+      setRemovingOrderId(orderToRemove.id);
+      await produceRequestApi.updateStatus(orderToRemove.id, "pending");
+      
+      // Remove from local state
+      setAcceptedOrders(prev => prev.filter(o => o.id !== orderToRemove.id));
+      setSelectedOrderIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(orderToRemove.id);
+        return newSet;
+      });
+      
+      handleCloseRemoveDialog();
+    } catch (err) {
+      console.error("Failed to remove order:", err);
+      setOrdersError("Failed to remove order. Please try again.");
+    } finally {
+      setRemovingOrderId(null);
+    }
   };
 
   // If selectedRequests changes, update stops accordingly (but only if not already matching)
@@ -230,6 +276,21 @@ const RoutePlanner: FunctionalComponent = () => {
                     📍 {order.delivery_address}
                   </Typography>
                 </Box>
+                <Tooltip title="Remove from accepted orders">
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={(e) => handleRemoveOrderClick(e, order)}
+                    disabled={removingOrderId === order.id}
+                    sx={{ ml: 1 }}
+                  >
+                    {removingOrderId === order.id ? (
+                      <CircularProgress size={18} color="inherit" />
+                    ) : (
+                      <DeleteIcon />
+                    )}
+                  </IconButton>
+                </Tooltip>
               </Box>
             ))}
           </Box>
@@ -349,6 +410,40 @@ const RoutePlanner: FunctionalComponent = () => {
           </Box>
         </Box>
       )}
+
+      {/* Confirmation Dialog for Removing Accepted Order */}
+      <Dialog
+        open={confirmRemoveDialogOpen}
+        onClose={handleCloseRemoveDialog}
+        aria-labelledby="remove-order-dialog-title"
+        aria-describedby="remove-order-dialog-description"
+      >
+        <DialogTitle id="remove-order-dialog-title">
+          Remove Accepted Order?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="remove-order-dialog-description">
+            Are you sure you want to remove the order from <strong>{orderToRemove?.restaurant_name}</strong> for{" "}
+            <strong>{orderToRemove?.quantity_needed} {orderToRemove?.unit}</strong> of{" "}
+            <strong>{orderToRemove?.produce_type}</strong>?
+            <br /><br />
+            This will set the order status back to pending and it will appear in the request feed again.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseRemoveDialog} color="inherit">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirmRemoveOrder} 
+            color="error" 
+            variant="contained"
+            disabled={removingOrderId !== null}
+          >
+            {removingOrderId !== null ? "Removing..." : "Remove Order"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
